@@ -1,3 +1,4 @@
+import { Dialog } from "./Dialog";
 import React, { useState, useEffect, useRef } from "react";
 import { Camera, SimulationVideo, VideoUploadResult } from "../types";
 import {
@@ -247,7 +248,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+    <Dialog onClose={onClose} label="Camera configuration">
       <div className="bg-sentinel-card border border-sentinel-border rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden my-8">
         {/* Header */}
         <div className="px-6 py-4 border-b border-sentinel-border flex items-center justify-between bg-slate-900/90">
@@ -267,6 +268,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
             </div>
           </div>
           <button
+            aria-label="Close dialog"
             onClick={onClose}
             className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition"
           >
@@ -275,7 +277,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
         </div>
 
         {/* Source Mode Tabs */}
-        <div className="bg-slate-900/60 px-6 pt-3 border-b border-sentinel-border flex space-x-2">
+        <div className="bg-slate-900/60 px-4 pt-3 border-b border-sentinel-border flex gap-1 overflow-x-auto">
           <button
             type="button"
             onClick={() => {
@@ -326,7 +328,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
           {/* TAB 1: UPLOAD VIDEO */}
           {sourceMode === "upload" && (
             <div className="space-y-3">
@@ -564,10 +566,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-gray-300 mb-1">
+              <label htmlFor="cameramodal-field-1" className="block text-[11px] font-semibold text-gray-300 mb-1">
                 Location Area *
               </label>
-              <input
+              <input id="cameramodal-field-1"
                 type="text"
                 required
                 value={location}
@@ -631,10 +633,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({
               </div>
 
               <div>
-                <label className="text-gray-400 text-[11px] block mb-1">
+                <label htmlFor="cameramodal-field-2" className="text-gray-400 text-[11px] block mb-1">
                   Detection Sensitivity: {sensitivity.toFixed(2)}
                 </label>
-                <input
+                <input id="cameramodal-field-2"
                   type="range"
                   min="0.10"
                   max="0.60"
@@ -648,10 +650,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({
 
             <div className="grid grid-cols-2 gap-3 text-xs pt-1">
               <div>
-                <label className="text-gray-400 text-[11px] block mb-1">
+                <label htmlFor="cameramodal-field-3" className="text-gray-400 text-[11px] block mb-1">
                   Pre-buffer: {preBufferSeconds}s
                 </label>
-                <input
+                <input id="cameramodal-field-3"
                   type="number"
                   min="4"
                   max="30"
@@ -661,10 +663,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({
                 />
               </div>
               <div>
-                <label className="text-gray-400 text-[11px] block mb-1">
+                <label htmlFor="cameramodal-field-4" className="text-gray-400 text-[11px] block mb-1">
                   Post-buffer: {postBufferSeconds}s
                 </label>
-                <input
+                <input id="cameramodal-field-4"
                   type="number"
                   min="4"
                   max="30"
@@ -708,6 +710,6 @@ export const CameraModal: React.FC<CameraModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   );
 };

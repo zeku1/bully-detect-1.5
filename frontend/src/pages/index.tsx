@@ -225,15 +225,23 @@ export default function SurveillancePage() {
         }}
       />
 
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+      <main id="main-content" tabIndex={-1} className="page-shell">
+        <div className="flex flex-wrap items-end justify-between gap-5">
+          <div><p className="eyebrow mb-2">Monitoring workspace</p><h1 className="page-title">Live overview</h1><p className="page-description">Monitor your cameras and respond to incidents in one place.</p></div>
+          <div className="flex gap-6 rounded-xl border border-sentinel-border bg-sentinel-card px-5 py-3">
+            <div><p className="text-[11px] text-slate-400">Registered cameras</p><p className="text-2xl font-semibold tabular-nums mt-1">{cameras.length}</p></div>
+            <div className="border-l border-sentinel-border pl-6"><p className="text-[11px] text-slate-400">Awaiting review</p><p className={"text-2xl font-semibold tabular-nums mt-1 " + (incidents.length ? "text-red-400" : "text-slate-200")}>{incidents.length}</p></div>
+          </div>
+        </div>
+        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         {/* CCTV Camera Wall */}
-        <section>
+        <section className="min-w-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400">
-              Live CCTV Grid View
+            <h2 className="section-title">
+              Camera feeds
             </h2>
             <span className="text-[11px] text-gray-500 font-mono">
-              Auto-sampling @ 2 FPS
+              Live & simulated sources
             </span>
           </div>
           <CameraWall
@@ -250,10 +258,10 @@ export default function SurveillancePage() {
         </section>
 
         {/* Active Alerts Queue */}
-        <section className="pt-2">
+        <section className="min-w-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400">
-              Real-Time Alert Dispatch
+            <h2 className="section-title">
+              Incident queue
             </h2>
           </div>
           <AlertQueue
@@ -262,6 +270,7 @@ export default function SurveillancePage() {
             onOpenReview={(inc) => setSelectedIncident(inc)}
           />
         </section>
+        </div>
       </main>
 
       {/* Review Modal */}

@@ -9,9 +9,9 @@ module.exports = {
     extend: {
       colors: {
         sentinel: {
-          bg: "#0B0F17",
-          card: "#121826",
-          border: "#1E293B",
+          bg: "#090F1A",
+          card: "#111D2E",
+          border: "#25334A",
           accent: "#3B82F6",
           danger: "#EF4444",
           warning: "#F59E0B",

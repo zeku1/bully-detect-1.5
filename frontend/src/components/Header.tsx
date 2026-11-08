@@ -8,7 +8,6 @@ import {
   History,
   BarChart3,
   Plus,
-  Bell,
   Volume2,
   VolumeX,
   Upload,
@@ -30,8 +29,6 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  cameraCount,
-  activeAlertCount,
   onAddCamera,
   onUploadSimulation,
   soundEnabled = true,
@@ -59,183 +56,38 @@ export const Header: React.FC<HeaderProps> = ({
     },
   ];
 
-  const getRoleBadge = () => {
-    switch (user?.role) {
-      case "admin":
-        return {
-          label: "ADMIN",
-          style: "bg-red-500/20 text-red-300 border-red-500/40",
-        };
-      case "supervisor":
-        return {
-          label: "SUPERVISOR",
-          style: "bg-amber-500/20 text-amber-300 border-amber-500/40",
-        };
-      case "security":
-      default:
-        return {
-          label: "SECURITY",
-          style: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-        };
-    }
-  };
-
-  const roleBadge = getRoleBadge();
-
   return (
-    <header className="bg-sentinel-card border-b border-sentinel-border px-6 py-3 sticky top-0 z-40">
-      <div className="flex items-center justify-between">
-        {/* Brand */}
-        <div className="flex items-center space-x-6">
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="bg-red-500/10 p-2 rounded-lg border border-red-500/30 group-hover:border-red-500/60 transition">
-              <ShieldAlert className="w-6 h-6 text-red-500" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-white tracking-wide">SAFECAM AI</h1>
-              <p className="text-xs text-gray-400">AI Central Monitoring & Violence Detection</p>
-            </div>
+    <header className="border-b border-sentinel-border bg-sentinel-bg/95">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:block focus:p-3">Skip to content</a>
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 py-5">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="rounded-xl bg-blue-500/10 border border-blue-500/25 p-2.5"><ShieldAlert className="h-6 w-6 text-blue-400" /></div>
+            <div><span className="text-base font-bold tracking-[0.14em] text-white">SAFECAM <span className="text-blue-400">AI</span></span><p className="text-[10px] uppercase tracking-[0.16em] text-slate-400 mt-1">Security operations</p></div>
           </Link>
-
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-1 pl-4 border-l border-sentinel-border">
-            {navItems
-              .filter((item) => item.show)
-              .map((item) => {
-                const Icon = item.icon;
-                const isActive = router.pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-md text-sm font-medium transition ${
-                      isActive
-                        ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                        : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-          </nav>
+          {user && <div className="flex items-center gap-3">
+            <div className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full border border-sentinel-border bg-slate-800"><UserIcon className="h-4 w-4 text-slate-300" /></div>
+            <div className="text-left"><p className="text-sm font-medium text-slate-200 max-w-40 truncate">{user.name}</p><p className="text-[10px] uppercase tracking-wider text-slate-400">{user.role}</p></div>
+            <button onClick={logout} aria-label="Log out" title="Log out" className="toolbar-button"><LogOut className="h-4 w-4" /></button>
+          </div>}
         </div>
-
-        {/* Status badges & Actions */}
-        <div className="flex items-center space-x-3">
-          {/* Sound Toggle */}
-          {onToggleSound && (
-            <button
-              onClick={onToggleSound}
-              title={soundEnabled ? "Mute alert audio" : "Enable alert audio"}
-              className={`p-2 rounded-lg border text-xs flex items-center space-x-1.5 transition ${
-                soundEnabled
-                  ? "bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
-                  : "bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700"
-              }`}
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              <span className="hidden sm:inline">{soundEnabled ? "Audio On" : "Muted"}</span>
-            </button>
-          )}
-
-          {/* YOLO Labels Toggle */}
-          {onToggleYoloLabels && (
-            <button
-              onClick={onToggleYoloLabels}
-              title={
-                yoloLabelsEnabled
-                  ? "Hide YOLO person labels on live cameras"
-                  : "Show YOLO person labels on live cameras"
-              }
-              className={`px-3 py-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1.5 transition ${
-                yoloLabelsEnabled
-                  ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300 shadow-sm shadow-cyan-500/20 hover:bg-cyan-500/30"
-                  : "bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-gray-200"
-              }`}
-            >
-              <Tag className="w-3.5 h-3.5" />
-              <span>
-                Labels:{" "}
-                <strong className={yoloLabelsEnabled ? "text-cyan-200 font-bold" : "text-gray-400"}>
-                  {yoloLabelsEnabled ? "ON" : "OFF"}
-                </strong>
-              </span>
-            </button>
-          )}
-
-          {/* Active Cameras Badge */}
-          <div className="hidden sm:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-gray-300">
-              Cameras: <strong className="text-white font-semibold">{cameraCount}</strong>
-            </span>
-          </div>
-
-          {/* Active Alerts Badge */}
-          <div
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs font-medium ${
-              activeAlertCount > 0
-                ? "bg-red-500/20 border-red-500/50 text-red-400 animate-bounce"
-                : "bg-slate-800/80 border-slate-700 text-gray-400"
-            }`}
-          >
-            <Bell className="w-3.5 h-3.5" />
-            <span>
-              Alerts:{" "}
-              <strong className={activeAlertCount > 0 ? "text-red-300" : "text-white"}>
-                {activeAlertCount}
-              </strong>
-            </span>
-          </div>
-
-          {/* Admin-only: Simulate Video Button */}
-          {hasRole(["admin"]) && onUploadSimulation && (
-            <button
-              onClick={onUploadSimulation}
-              className="bg-indigo-600/80 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 shadow transition border border-indigo-500/30"
-              title="Upload video to simulate a CCTV camera"
-            >
-              <Upload className="w-4 h-4" />
-              <span>Simulate Video</span>
-            </button>
-          )}
-
-          {/* Admin-only: Add Camera Button */}
-          {hasRole(["admin"]) && onAddCamera && (
-            <button
-              onClick={onAddCamera}
-              className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 shadow transition"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Camera</span>
-            </button>
-          )}
-
-          {/* User Profile & Role Pill */}
-          {user && (
-            <div className="flex items-center space-x-2.5 pl-3 border-l border-sentinel-border">
-              <div className="flex flex-col text-right">
-                <span className="text-xs font-semibold text-gray-200 leading-tight">
-                  {user.name}
-                </span>
-                <span
-                  className={`text-[9px] uppercase font-mono px-1.5 py-0.5 rounded border mt-0.5 self-end ${roleBadge.style}`}
-                >
-                  {roleBadge.label}
-                </span>
-              </div>
-
-              <button
-                onClick={logout}
-                title="Log out of Safecam AI"
-                className="p-1.5 rounded-lg bg-gray-800/80 hover:bg-red-500/20 hover:text-red-400 border border-gray-700 text-gray-400 transition"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pb-4">
+          <nav aria-label="Main navigation" className="flex max-w-full gap-1 overflow-x-auto py-1">
+            {navItems.filter(item => item.show).map(item => {
+              const Icon = item.icon;
+              const active = router.pathname === item.href;
+              return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+                className={"flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition " + (active ? "bg-blue-500/10 text-blue-300" : "text-slate-400 hover:bg-slate-800 hover:text-white")}>
+                <Icon className="h-4 w-4" />{item.label}
+              </Link>;
+            })}
+          </nav>
+          {router.pathname === "/" && <div className="flex flex-wrap items-center gap-2">
+            {onToggleSound && <button onClick={onToggleSound} aria-pressed={soundEnabled} aria-label="Alert audio" className="toolbar-button">{soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}<span>{soundEnabled ? "Audio on" : "Muted"}</span></button>}
+            {onToggleYoloLabels && <button onClick={onToggleYoloLabels} aria-pressed={yoloLabelsEnabled} className="toolbar-button"><Tag className="h-4 w-4" />Labels {yoloLabelsEnabled ? "on" : "off"}</button>}
+            {hasRole(["admin"]) && onUploadSimulation && <button onClick={onUploadSimulation} className="toolbar-button"><Upload className="h-4 w-4" />Simulate video</button>}
+            {hasRole(["admin"]) && onAddCamera && <button onClick={onAddCamera} className="primary-button"><Plus className="h-4 w-4" />Add camera</button>}
+          </div>}
         </div>
       </div>
     </header>

@@ -74,12 +74,12 @@ export default function HistoryPage() {
     <>
       <Header cameraCount={cameras.length} activeAlertCount={0} />
 
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+      <main id="main-content" tabIndex={-1} className="page-shell">
         {/* Title & Filter Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-white tracking-wide">Incident History & Audit Log</h1>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <h1 className="page-title">Incident history</h1>
+            <p className="page-description">
               Search, filter, and inspect past AI violence detections and operator reviews.
             </p>
           </div>
@@ -90,6 +90,7 @@ export default function HistoryPage() {
               <Search className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
               <input
                 type="text"
+                aria-label="Search incidents"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search incident ID, category..."
@@ -107,9 +108,10 @@ export default function HistoryPage() {
           </div>
 
           <select
+            aria-label="Filter by camera"
             value={cameraFilter}
             onChange={(e) => setCameraFilter(e.target.value)}
-            className="bg-slate-900 border border-sentinel-border rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none"
+            className="bg-slate-900 border border-sentinel-border rounded-lg max-w-full px-2.5 py-1.5 text-white text-xs focus:outline-none"
           >
             <option value="">All Cameras</option>
             {cameras.map((c) => (
@@ -120,9 +122,10 @@ export default function HistoryPage() {
           </select>
 
           <select
+            aria-label="Filter by severity"
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="bg-slate-900 border border-sentinel-border rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none"
+            className="bg-slate-900 border border-sentinel-border rounded-lg max-w-full px-2.5 py-1.5 text-white text-xs focus:outline-none"
           >
             <option value="">All Severities</option>
             <option value="Critical">Critical</option>
@@ -132,9 +135,10 @@ export default function HistoryPage() {
           </select>
 
           <select
+            aria-label="Filter by classification"
             value={classificationFilter}
             onChange={(e) => setClassificationFilter(e.target.value)}
-            className="bg-slate-900 border border-sentinel-border rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none"
+            className="bg-slate-900 border border-sentinel-border rounded-lg max-w-full px-2.5 py-1.5 text-white text-xs focus:outline-none"
           >
             <option value="">All Classifications</option>
             <option value="Confirmed">Confirmed Violence</option>
@@ -149,8 +153,8 @@ export default function HistoryPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-sentinel-card border border-sentinel-border rounded-xl overflow-hidden shadow">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="bg-sentinel-card border border-sentinel-border rounded-xl overflow-x-auto shadow">
+          <table className="data-table min-w-[760px]">
             <thead>
               <tr className="bg-slate-900/80 border-b border-sentinel-border text-gray-400 uppercase tracking-wider text-[10px]">
                 <th className="py-3 px-4">Incident ID</th>

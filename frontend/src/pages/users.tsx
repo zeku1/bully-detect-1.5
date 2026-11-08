@@ -1,3 +1,4 @@
+import { Dialog } from "../components/Dialog";
 import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import { Header } from "../components/Header";
@@ -200,15 +201,15 @@ export default function UsersManagementPage() {
 
       <Header cameraCount={0} activeAlertCount={0} />
 
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+      <main id="main-content" tabIndex={-1} className="page-shell">
         {/* Title & Action */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-white tracking-wide flex items-center space-x-2">
+            <h1 className="page-title flex items-center space-x-2">
               <Users className="w-5 h-5 text-blue-400" />
-              <span>User & Role-Based Access Control</span>
+              <span>Users & access</span>
             </h1>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="page-description">
               Manage operators, supervisors, and administrative credentials for Safecam AI.
             </p>
           </div>
@@ -237,7 +238,7 @@ export default function UsersManagementPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="data-table min-w-[640px]">
                 <thead className="bg-slate-900/80 text-gray-400 uppercase text-[10px] tracking-wider border-b border-sentinel-border">
                   <tr>
                     <th className="px-5 py-3.5">User</th>
@@ -335,7 +336,7 @@ export default function UsersManagementPage() {
 
         {/* Add User Modal */}
         {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <Dialog label="Add user" onClose={() => setIsAddModalOpen(false)}>
             <div className="bg-sentinel-card border border-sentinel-border rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-fade-in">
               <div className="flex items-center justify-between border-b border-sentinel-border pb-3">
                 <h3 className="text-base font-bold text-white flex items-center space-x-2">
@@ -344,7 +345,7 @@ export default function UsersManagementPage() {
                 </h3>
                 <button
                   onClick={() => setIsAddModalOpen(false)}
-                  className="text-gray-400 hover:text-white"
+                  aria-label="Close dialog" className="text-gray-400 hover:text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -359,8 +360,8 @@ export default function UsersManagementPage() {
 
               <form onSubmit={handleSaveAdd} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Full Name</label>
-                  <input
+                  <label htmlFor="users-field-1" className="block text-gray-300 font-medium mb-1">Full Name</label>
+                  <input id="users-field-1"
                     type="text"
                     required
                     value={formData.name}
@@ -372,8 +373,8 @@ export default function UsersManagementPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-300 font-medium mb-1">Username</label>
-                    <input
+                    <label htmlFor="users-field-2" className="block text-gray-300 font-medium mb-1">Username</label>
+                    <input id="users-field-2"
                       type="text"
                       required
                       value={formData.username}
@@ -384,8 +385,8 @@ export default function UsersManagementPage() {
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 font-medium mb-1">Password</label>
-                    <input
+                    <label htmlFor="users-field-3" className="block text-gray-300 font-medium mb-1">Password</label>
+                    <input id="users-field-3"
                       type="password"
                       required
                       value={formData.password}
@@ -397,8 +398,8 @@ export default function UsersManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Email Address</label>
-                  <input
+                  <label htmlFor="users-field-4" className="block text-gray-300 font-medium mb-1">Email Address</label>
+                  <input id="users-field-4"
                     type="email"
                     required
                     value={formData.email}
@@ -409,8 +410,8 @@ export default function UsersManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Role & Permissions</label>
-                  <select
+                  <label htmlFor="users-field-5" className="block text-gray-300 font-medium mb-1">Role & Permissions</label>
+                  <select id="users-field-5"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
                     className="w-full bg-slate-900 border border-sentinel-border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
@@ -453,12 +454,12 @@ export default function UsersManagementPage() {
                 </div>
               </form>
             </div>
-          </div>
+          </Dialog>
         )}
 
         {/* Edit User Modal */}
         {editingUser && (
-          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <Dialog label="Edit user" onClose={() => setEditingUser(null)}>
             <div className="bg-sentinel-card border border-sentinel-border rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-fade-in">
               <div className="flex items-center justify-between border-b border-sentinel-border pb-3">
                 <h3 className="text-base font-bold text-white flex items-center space-x-2">
@@ -467,7 +468,7 @@ export default function UsersManagementPage() {
                 </h3>
                 <button
                   onClick={() => setEditingUser(null)}
-                  className="text-gray-400 hover:text-white"
+                  aria-label="Close dialog" className="text-gray-400 hover:text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -482,8 +483,8 @@ export default function UsersManagementPage() {
 
               <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Full Name</label>
-                  <input
+                  <label htmlFor="users-field-6" className="block text-gray-300 font-medium mb-1">Full Name</label>
+                  <input id="users-field-6"
                     type="text"
                     required
                     value={formData.name}
@@ -493,8 +494,8 @@ export default function UsersManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Email Address</label>
-                  <input
+                  <label htmlFor="users-field-7" className="block text-gray-300 font-medium mb-1">Email Address</label>
+                  <input id="users-field-7"
                     type="email"
                     required
                     value={formData.email}
@@ -504,8 +505,8 @@ export default function UsersManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Role & Permissions</label>
-                  <select
+                  <label htmlFor="users-field-8" className="block text-gray-300 font-medium mb-1">Role & Permissions</label>
+                  <select id="users-field-8"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
                     disabled={editingUser.id === currentUser?.id}
@@ -571,7 +572,7 @@ export default function UsersManagementPage() {
                 </div>
               </form>
             </div>
-          </div>
+          </Dialog>
         )}
       </main>
     </>

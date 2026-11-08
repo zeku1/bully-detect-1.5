@@ -76,32 +76,35 @@ export default function LoginPage() {
   return (
     <>
       <Head>
-        <title>Login — CCTV Sentinel AI Monitoring</title>
+        <title>Login — Safecam AI</title>
       </Head>
 
-      <div className="min-h-screen bg-sentinel-bg flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
-        {/* Ambient background glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-md w-full space-y-8 z-10">
+      <main className="login-layout">
+        <section className="hidden lg:block max-w-xl mx-auto">
+          <p className="eyebrow mb-8">Safecam AI / Security operations</p>
+          <div className="inline-flex rounded-2xl border border-blue-500/25 bg-blue-500/10 p-5 mb-8"><ShieldCheck className="h-10 w-10 text-blue-400" /></div>
+          <h1 className="text-5xl xl:text-6xl font-semibold tracking-tight leading-[1.12] text-white">A clearer view.<br /><span className="text-blue-400">A faster response.</span></h1>
+          <p className="mt-6 text-base leading-7 text-slate-400 max-w-md">Your workspace for live camera monitoring, AI-assisted detection, and informed incident review.</p>
+          <div className="mt-12 grid grid-cols-3 gap-5 border-t border-sentinel-border pt-7 text-sm text-slate-300"><span>Live monitoring</span><span>Incident review</span><span>Actionable insights</span></div>
+        </section>
+        <div className="max-w-md w-full space-y-6 mx-auto">
           {/* Header Brand */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl shadow-lg shadow-red-500/10">
-              <ShieldAlert className="w-9 h-9 text-red-500" />
+            <div className="inline-flex items-center justify-center p-3.5 bg-blue-500/10 border border-blue-500/30 rounded-2xl">
+              <ShieldAlert className="w-9 h-9 text-blue-400" />
             </div>
-            <h1 className="text-2xl font-bold tracking-wider text-white">SAFECAM AI</h1>
+            <p className="text-xl font-bold tracking-[0.14em] text-white">SAFECAM AI</p>
             <p className="text-xs text-gray-400">
               AI Central Monitoring & Violence Incident Management System
             </p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-sentinel-card border border-sentinel-border rounded-2xl p-6 shadow-2xl backdrop-blur-sm space-y-6">
+          <div className="bg-sentinel-card border border-sentinel-border rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm space-y-6">
             <div className="border-b border-sentinel-border pb-3">
-              <h2 className="text-base font-semibold text-gray-200">Sign in to your account</h2>
+              <h2 className="text-xl font-semibold text-gray-200">Sign in to your account</h2>
               <p className="text-xs text-gray-400 mt-0.5">
-                Role-based access requires operator authentication.
+                Welcome back. Sign in to your monitoring workspace.
               </p>
             </div>
 
@@ -114,12 +117,13 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                <label htmlFor="username" className="block text-xs font-medium text-gray-300 mb-1.5">
                   Username or Email
                 </label>
                 <div className="relative">
                   <UserIcon className="w-4 h-4 text-gray-500 absolute left-3 top-3" />
                   <input
+                    id="username" autoComplete="username"
                     type="text"
                     required
                     value={username}
@@ -131,12 +135,13 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                <label htmlFor="password" className="block text-xs font-medium text-gray-300 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-3" />
                   <input
+                    id="password" autoComplete="current-password"
                     type={showPassword ? "text" : "password"}
                     required
                     value={password}
@@ -146,6 +151,7 @@ export default function LoginPage() {
                   />
                   <button
                     type="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-gray-500 hover:text-gray-300"
                   >
@@ -263,7 +269,7 @@ export default function LoginPage() {
             Safecam AI v2.0 &bull; Edge AI Violence Detection &bull; Multi-Tier RBAC
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

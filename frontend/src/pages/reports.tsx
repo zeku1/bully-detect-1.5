@@ -37,44 +37,46 @@ export default function ReportsPage() {
     <>
       <Header cameraCount={cameras.length} activeAlertCount={0} />
 
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+      <main id="main-content" tabIndex={-1} className="page-shell">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-wide">Surveillance Analytics & Model KPIs</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <h1 className="page-title">Reports & insights</h1>
+          <p className="page-description">
             Evaluate violence detection accuracy, review throughput, and camera false-positive rates.
           </p>
         </div>
 
+        {loading && <p role="status" className="text-sm text-slate-400">Loading reports...</p>}
+        {!loading && !report && <p role="status" className="rounded-xl border border-sentinel-border bg-sentinel-card p-5 text-sm text-slate-400">Report data is unavailable. Refresh the page to try again.</p>}
         {/* KPI Cards */}
         {report && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="bg-sentinel-card border border-sentinel-border rounded-xl p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+            <div className="bg-sentinel-card border border-sentinel-border rounded-xl p-5">
               <div className="text-gray-400 text-xs font-semibold uppercase">Total AI Alerts</div>
-              <div className="text-2xl font-bold text-white mt-1 font-mono">{report.total_alerts}</div>
+              <div className="text-3xl font-semibold text-white mt-1 font-mono">{report.total_alerts}</div>
               <div className="text-[11px] text-gray-500 mt-1">Aggregated events</div>
             </div>
 
-            <div className="bg-sentinel-card border border-red-500/30 rounded-xl p-4">
+            <div className="bg-sentinel-card border border-red-500/30 rounded-xl p-5">
               <div className="text-red-400 text-xs font-semibold uppercase">Confirmed Violence</div>
-              <div className="text-2xl font-bold text-red-400 mt-1 font-mono">{report.confirmed_violence}</div>
+              <div className="text-3xl font-semibold text-red-400 mt-1 font-mono">{report.confirmed_violence}</div>
               <div className="text-[11px] text-gray-500 mt-1">Verified by operator</div>
             </div>
 
-            <div className="bg-sentinel-card border border-emerald-500/30 rounded-xl p-4">
+            <div className="bg-sentinel-card border border-emerald-500/30 rounded-xl p-5">
               <div className="text-emerald-400 text-xs font-semibold uppercase">False Positives</div>
-              <div className="text-2xl font-bold text-emerald-400 mt-1 font-mono">{report.false_positives}</div>
+              <div className="text-3xl font-semibold text-emerald-400 mt-1 font-mono">{report.false_positives}</div>
               <div className="text-[11px] text-gray-500 mt-1">Feedback dataset</div>
             </div>
 
-            <div className="bg-sentinel-card border border-amber-500/30 rounded-xl p-4">
+            <div className="bg-sentinel-card border border-amber-500/30 rounded-xl p-5">
               <div className="text-amber-400 text-xs font-semibold uppercase">Needs Review</div>
-              <div className="text-2xl font-bold text-amber-400 mt-1 font-mono">{report.needs_review}</div>
+              <div className="text-3xl font-semibold text-amber-400 mt-1 font-mono">{report.needs_review}</div>
               <div className="text-[11px] text-gray-500 mt-1">Escalated cases</div>
             </div>
 
-            <div className="bg-sentinel-card border border-blue-500/30 rounded-xl p-4">
+            <div className="bg-sentinel-card border border-blue-500/30 rounded-xl p-5">
               <div className="text-blue-400 text-xs font-semibold uppercase">FP Rate</div>
-              <div className="text-2xl font-bold text-blue-400 mt-1 font-mono">{report.false_positive_rate}%</div>
+              <div className="text-3xl font-semibold text-blue-400 mt-1 font-mono">{report.false_positive_rate}%</div>
               <div className="text-[11px] text-gray-500 mt-1">Of reviewed incidents</div>
             </div>
           </div>

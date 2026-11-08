@@ -42,7 +42,7 @@ export const CameraWall: React.FC<CameraWallProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {cameras.map((camera) => {
         const isAlerting = activeAlertCameraIds.has(camera.id);
         const isOnline = camera.runtime_status === "ONLINE" || camera.status === "ONLINE";
@@ -54,27 +54,27 @@ export const CameraWall: React.FC<CameraWallProps> = ({
             key={camera.id}
             className={`relative rounded-xl overflow-hidden border bg-sentinel-card transition-all duration-300 ${
               isAlerting
-                ? "border-red-500 ring-4 ring-red-500/20 shadow-lg shadow-red-500/10 alert-pulse"
+                ? "border-red-500 ring-1 ring-red-500/20 shadow-lg shadow-red-500/10 alert-pulse"
                 : "border-sentinel-border hover:border-slate-600"
             }`}
           >
             {/* Tile Header */}
-            <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-900/90 border-b border-sentinel-border">
+            <div className="flex flex-wrap gap-3 items-center justify-between px-3.5 py-2.5 bg-slate-900/90 border-b border-sentinel-border">
               <div className="flex items-center space-x-2 truncate">
                 <span
                   className={`w-2.5 h-2.5 rounded-full ${
                     isAlerting
-                      ? "bg-red-500 animate-ping"
+                      ? "bg-red-500 "
                       : isOnline
                       ? "bg-emerald-500"
                       : "bg-red-500"
                   }`}
                 />
-                <span className="font-semibold text-xs text-white truncate">{camera.name}</span>
+                <span className="font-semibold text-sm text-white truncate">{camera.name}</span>
                 <span className="text-[11px] text-gray-400 truncate">({camera.location})</span>
               </div>
 
-              <div className="flex items-center space-x-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
                 {/* AI Status Badge */}
                 {camera.ai_enabled && (
                   <span
@@ -120,6 +120,7 @@ export const CameraWall: React.FC<CameraWallProps> = ({
                 {/* Toggle YOLO Labels button */}
                 <button
                   onClick={() => toggleCameraLabels(camera.id)}
+                  aria-pressed={isCameraLabelsOn}
                   className={`p-1 rounded transition ${
                     isCameraLabelsOn
                       ? "text-cyan-300 hover:text-cyan-200 bg-cyan-500/20 border border-cyan-500/40"
@@ -159,7 +160,7 @@ export const CameraWall: React.FC<CameraWallProps> = ({
                 <img
                   src={`http://localhost:5000/api/stream/${camera.id}/live?labels=${isCameraLabelsOn ? 1 : 0}`}
                   alt={camera.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   onError={(e) => {
                     // Fallback to placeholder if stream interrupted
                     (e.target as HTMLElement).style.display = "none";
@@ -203,7 +204,7 @@ export const CameraWall: React.FC<CameraWallProps> = ({
               {/* Big Alert Banner when active */}
               {isAlerting && (
                 <div className="absolute inset-0 bg-red-600/10 pointer-events-none flex items-center justify-center">
-                  <div className="bg-red-600/90 text-white font-extrabold px-4 py-2 rounded-lg shadow-xl tracking-wider text-sm flex items-center space-x-2 animate-bounce">
+                  <div className="bg-red-600/90 text-white font-extrabold px-4 py-2 rounded-lg shadow-xl tracking-wider text-sm flex items-center space-x-2 ">
                     <AlertTriangle className="w-5 h-5 text-yellow-300" />
                     <span>SUSPECTED VIOLENCE DETECTED</span>
                   </div>

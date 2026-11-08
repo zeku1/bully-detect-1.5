@@ -1,3 +1,4 @@
+import { Dialog } from "./Dialog";
 import React, { useState } from "react";
 import { Incident } from "../types";
 import { X, CheckCircle, AlertOctagon, HelpCircle, Film, Shield, Send } from "lucide-react";
@@ -97,12 +98,12 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <Dialog onClose={onClose} label="Incident review">
       <div className="bg-sentinel-card border border-sentinel-border rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-sentinel-border flex items-center justify-between bg-slate-900/80">
+        <div className="px-4 sm:px-6 py-4 border-b border-sentinel-border flex items-center justify-between bg-slate-900/80">
           <div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-sm text-blue-400 font-bold">{currentIncident.public_id}</span>
               <span className="text-gray-500">•</span>
               <span className="text-xs text-gray-400">{currentIncident.camera_name} ({currentIncident.camera_location})</span>
@@ -110,6 +111,7 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
             <h2 className="text-base font-bold text-white mt-0.5">Incident Review & Classification</h2>
           </div>
           <button
+            aria-label="Close dialog"
             onClick={onClose}
             className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition"
           >
@@ -134,6 +136,8 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
                   playsInline
                   className="w-full h-full object-contain"
                 />
+              ) : currentIncident.clip_status === "FAILED" ? (
+                <div className="p-6 text-center text-sm text-slate-400"><Film className="mx-auto mb-3 h-8 w-8" /><p className="font-medium text-slate-200">Clip unavailable</p><p className="mt-2">The incident details are still available for review.</p></div>
               ) : currentIncident.thumbnail_url ? (
                 <div className="relative w-full h-full flex items-center justify-center bg-black">
                   <img
@@ -271,10 +275,10 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
 
               {/* Reviewer Name */}
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                <label htmlFor="incidentreviewmodal-field-1" className="block text-xs font-semibold text-gray-300 mb-1">
                   Reviewer Name:
                 </label>
-                <input
+                <input id="incidentreviewmodal-field-1"
                   type="text"
                   value={reviewer}
                   onChange={(e) => setReviewer(e.target.value)}
@@ -285,10 +289,10 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
 
               {/* Review Notes */}
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">
+                <label htmlFor="incidentreviewmodal-field-2" className="block text-xs font-semibold text-gray-300 mb-1">
                   Review Notes:
                 </label>
-                <textarea
+                <textarea id="incidentreviewmodal-field-2"
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -311,6 +315,6 @@ export const IncidentReviewModal: React.FC<IncidentReviewModalProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
