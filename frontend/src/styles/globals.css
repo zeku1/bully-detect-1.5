@@ -46,3 +46,47 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+@layer components {
+  .console-header { @apply px-3 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-2; }
+  .console-brand-row { @apply flex items-center justify-between gap-5 w-full lg:w-auto lg:contents; }
+  .console-brand-row > a { @apply lg:order-1; }
+  .console-brand-row > div { @apply lg:order-3; }
+  .console-nav-row { @apply flex flex-wrap items-center justify-between gap-x-5 gap-y-2 w-full lg:contents; }
+  .console-nav-row > nav { @apply lg:order-2 lg:mr-auto; }
+  .console-nav-row > div { @apply lg:order-4; }
+  .monitor-workspace { @apply bg-[#090d14] flex flex-col min-h-screen; }
+  .monitor-workspace:fullscreen { height: 100dvh; overflow: auto; }
+  .monitor-main { @apply flex flex-col flex-1 min-h-0; }
+  .monitor-toolbar { @apply flex flex-wrap items-center justify-between gap-3 px-3 py-2 border-b border-sentinel-border bg-[#101722]; }
+  .console-button { @apply inline-flex items-center justify-center gap-1.5 rounded border border-sentinel-border px-2 py-1.5 text-xs text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed; }
+  .console-button[aria-pressed="true"], .tile-button[aria-pressed="true"] { @apply border-blue-500/50 text-blue-300 bg-blue-500/10; }
+  .monitor-columns { @apply grid flex-1 min-h-0 lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)_300px]; }
+  .camera-directory { @apply border-r border-sentinel-border bg-[#0e1520] overflow-y-auto; }
+  .console-panel-heading { @apply flex items-center justify-between px-4 py-3 border-b border-sentinel-border text-[10px] font-semibold tracking-[0.12em] text-slate-400; }
+  .camera-directory-item { @apply w-full flex items-start gap-2.5 rounded border border-transparent px-2 py-3 text-left hover:bg-slate-800/50; }
+  .camera-directory-item[aria-pressed="true"] { @apply bg-blue-500/10 border-blue-500/30; }
+  .monitor-wall { @apply flex flex-col min-w-0 min-h-0 p-2 bg-[#06090e]; }
+  .cctv-grid { @apply grid gap-1.5 flex-1 min-h-0; grid-template-columns: minmax(0, 1fr); }
+  .camera-tile { @apply flex flex-col min-w-0 min-h-0 border border-[#28313e] rounded-sm overflow-hidden bg-black; }
+  .camera-tile-alert { @apply border-red-500/70; }
+  .camera-tile-heading { @apply flex items-center gap-1.5 px-2 py-1 bg-[#131b27] text-slate-200; }
+  .tile-button { @apply inline-flex items-center justify-center p-1.5 rounded-sm text-slate-400 hover:text-white hover:bg-slate-700; }
+  .camera-viewport { @apply relative flex-1 min-h-0 bg-black overflow-hidden; aspect-ratio: 16 / 9; }
+  .camera-tile-footer { @apply flex items-center justify-between gap-2 px-2 py-1 bg-[#101722] text-[10px] text-slate-400; }
+  .camera-empty { @apply flex flex-col items-center justify-center gap-3 min-h-40 border border-dashed border-slate-800 rounded-sm bg-[#0a0f17] text-[11px] text-slate-600; }
+  .wall-statusbar { @apply flex flex-wrap items-center justify-between gap-2 pt-2 text-[10px] text-slate-500; }
+  .incident-panel { @apply border-l border-sentinel-border bg-[#0e1520] min-w-0 overflow-y-auto lg:col-span-2 xl:col-span-1; }
+  .incident-panel > div:not(.console-panel-heading) { @apply rounded-none border-0 shadow-none; }
+}
+@media (min-width: 640px) {
+  .cctv-grid-4, .cctv-grid-9 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .monitor-workspace { height: 100dvh; min-height: 640px; }
+  .monitor-columns { overflow: hidden; }
+  .cctv-grid-4 { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+  .cctv-grid-9 { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  .camera-viewport { aspect-ratio: auto; }
+  .camera-empty { min-height: 0; }
+}

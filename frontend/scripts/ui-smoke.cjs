@@ -25,7 +25,7 @@ async function main() {
     socket.send(JSON.stringify({ id: requestId, method, params }));
   });
   const evaluate = async expression => {
-    const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
+    const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true, userGesture: true });
     if (result.exceptionDetails) throw Error(JSON.stringify(result.exceptionDetails));
     return result.result.value;
   };
@@ -51,13 +51,14 @@ async function main() {
       const camera = { id: 1, name: 'North entrance', location: 'Main building', status: 'OFFLINE', stream_url: 'test', is_simulation: true, ai_enabled: true, sampling_rate: 2, sensitivity: .25, pre_buffer_seconds: 8, post_buffer_seconds: 8 };
       const incident = { id: 1, public_id: 'INC-001', camera_id: 1, camera_name: camera.name, category: 'Suspected violence', severity: 'High', peak_confidence: .91, average_confidence: .8, detected_at: '2026-11-08T10:00:00Z', status: 'AWAITING_REVIEW', clip_status: 'FAILED' };
       const realFetch = window.fetch;
+      window.testCameraCount = 2;
       window.fetch = async (input, init) => {
         const url = String(input);
         if (!url.startsWith('http://localhost:5000/')) return realFetch(input, init);
         let data = null;
         if (url.endsWith('/auth/me')) data = user;
         else if (url.endsWith('/auth/users')) data = [user];
-        else if (url.endsWith('/cameras')) data = [camera, { ...camera, id: 2, name: 'South corridor' }];
+        else if (url.endsWith('/cameras')) data = Array.from({ length: window.testCameraCount }, (_, i) => ({ ...camera, id: i + 1, name: i === 0 ? camera.name : 'Camera ' + (i + 1) }));
         else if (url.includes('/incidents/1')) data = incident;
         else if (url.includes('/incidents')) data = [incident];
         else if (url.endsWith('/cameras/simulations')) data = [];
@@ -103,6 +104,50 @@ async function main() {
         console.log(`PASS ${route} at ${width}px`);
       }
     }
+    await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+    await send('Page.navigate', { url: 'http://localhost:3100/' });
+    await until('document.querySelectorAll(".camera-tile").length === 2');
+    const clickLabel = async label => evaluate(`document.querySelector('button[aria-label="${label}"]').click()`);
+    for (const count of [0, 1, 4, 9, 12]) {
+      await evaluate(`window.testCameraCount = ${count}`);
+      await until(`document.querySelectorAll('.camera-directory-item').length === ${count}`);
+      for (const size of [1, 4, 9]) {
+        await clickLabel(size + ' camera layout');
+        await until(`!!document.querySelector('.cctv-grid-${size}')`);
+        assert.equal(await evaluate('document.querySelectorAll(".camera-tile").length'), Math.min(count, size));
+        assert.equal(await evaluate('document.querySelectorAll(".camera-empty").length'), Math.max(0, size - count));
+      }
+      console.log(`PASS layouts with ${count} cameras`);
+    }
+    await clickLabel('4 camera layout');
+    await clickLabel('Next cameras');
+    await until('document.querySelector(".camera-tile").getAttribute("aria-label") === "Camera 5"');
+    await clickLabel('Detection labels for Camera 5');
+    await clickLabel('Focus Camera 5');
+    await until('document.querySelectorAll(".camera-tile").length === 1');
+    await click('Back to grid');
+    await until('document.querySelectorAll(".camera-tile").length === 4');
+    assert.equal(await evaluate('document.querySelector(".camera-tile").getAttribute("aria-label")'), 'Camera 5');
+    assert.equal(await evaluate('document.querySelector(\'button[aria-label="Detection labels for Camera 5"]\').getAttribute("aria-pressed")'), 'false');
+    await clickLabel('Focus Camera 5');
+    await evaluate('window.testCameraCount = 1');
+    await until('document.querySelectorAll(".camera-directory-item").length === 1 && !!document.querySelector(".cctv-grid-4")');
+    assert.equal(await evaluate('document.querySelector(".camera-tile").getAttribute("aria-label")'), 'North entrance');
+    await evaluate('document.querySelector(".camera-viewport").dispatchEvent(new MouseEvent("dblclick", { bubbles: true }))');
+    await until('!!document.querySelector(".cctv-grid-1")');
+    await click('Back to grid');
+    await clickLabel('Enter fullscreen');
+    await until('!!document.fullscreenElement');
+    assert(await evaluate('document.fullscreenElement.contains(document.querySelector(".incident-panel"))'), 'Alerts remain in fullscreen');
+    await click('Review Incident');
+    await until('!!document.querySelector("dialog[open]")');
+    await clickLabel('Close dialog');
+    await clickLabel('Exit fullscreen');
+    await until('!document.fullscreenElement');
+    await evaluate('document.querySelector(".monitor-workspace").requestFullscreen = () => Promise.reject(new Error("Unavailable"))');
+    await clickLabel('Enter fullscreen');
+    await until('document.body.textContent.includes("Fullscreen is unavailable")');
+    console.log('PASS pagination, focus, labels, removed camera, fullscreen, and fullscreen failure');
     for (const [role, count] of [['supervisor', 3], ['security', 2]]) {
       await evaluate(`sessionStorage.setItem('test-role', '${role}')`);
       await send('Page.navigate', { url: 'http://localhost:3100/' });
